@@ -193,6 +193,8 @@ class MyLogo extends HTMLElement {
         Largeur : 30 <input type="range" value=300 min=30 max=1200 id="selecteurLargeur"> 1200
         <br>
         URL de l'image de fond : <input type="urlImage"id="urlImage">
+         <br>
+        Taille de l'image de fond : 30 <input type="range" value=300 min=30 max=1200 id="selecteurTailleImageFond"> 1200
     <h1>Bordure du logo</h1>
     
         Largeur : 0 <input type="range" value=0 min=0 max=20 id="selecteurLargeurBordure"> 20
@@ -230,30 +232,53 @@ class MyLogo extends HTMLElement {
         this.animationClass = this.getAttribute("animation");
         this.controls = this.getAttribute("controls");
         this.size = this.getAttribute("size");
-        //this.tryToValorise();
+
     }
     tryToValorise(){
         let parametres = new URLSearchParams(window.location.search);
          console.log(parametres.entries())
-         
              for (let p of parametres.entries()) {
                  console.log(p);
-                 if(p[0]=="changeCouleur") {
-                     this.changeCouleur("#"+p[1]);
-                     console.log(p[1])
+                 if(p[0]=="1") {
+                     this.changeCouleur(this.utf8_to_str(decodeURI(p[1])));
+                     this.shadowRoot.querySelector("#selecteurCouleur").setAttribute("value",this.utf8_to_str(decodeURI(p[1])))
                  }
-                 if(p[0]=="urlImageValue") {
-                    console.log(decodeURI(p[1]))
-                     console.log(p[1])
-
-                     console.log(this.utf8_to_str(p[1]))
-                    this.setUrlImage(this.utf8_to_str(p[1]));
-                   
+                 if(p[0]=="2") {
+                    this.setUrlImage(this.utf8_to_str(decodeURI(p[1])));
+                     this.shadowRoot.querySelector("#urlImage").setAttribute("value",this.utf8_to_str(decodeURI(p[1])))
                 }
-                if(p[0]=="changeSizeValue") {
-                    this.changeSize(+p[1]);
-                    console.log(p[1])
+                if(p[0]=="3") {
+                    this.changeSize(p[1]);
+                    this.shadowRoot.querySelector("#selecteurTaille").setAttribute("value",this.utf8_to_str(decodeURI(p[1])))
                 }
+                 if(p[0]=="4") {
+                     this.changeHauteur(p[1]);
+                     this.shadowRoot.querySelector("#selecteurHauteur").setAttribute("value",this.utf8_to_str(decodeURI(p[1])))
+                 }
+                 if(p[0]=="5") {
+                     this.changeLargeurBordure(p[1]);
+                     this.shadowRoot.querySelector("#selecteurLargeurBordure").setAttribute("value",this.utf8_to_str(decodeURI(p[1])))
+                 }
+                 if(p[0]=="6") {
+                     this.changeCouleurBordure(this.utf8_to_str(decodeURI(p[1])));
+                     this.shadowRoot.querySelector("#selecteurCouleurBordure").setAttribute("value",this.utf8_to_str(decodeURI(p[1])))
+                 }
+                 if(p[0]=="7") {
+                     this.selecteurRadiusBordure(p[1]);
+                     this.shadowRoot.querySelector("#selecteurRadiusBordure").setAttribute("value",this.utf8_to_str(decodeURI(p[1])))
+                 }
+                 if(p[0]=="8") {
+                     this.changerTextLogo(p[1]);
+                     this.shadowRoot.querySelector("#inputTextLogo").setAttribute("value",this.utf8_to_str(decodeURI(p[1])))
+                 }
+                 if(p[0]=="9") {
+                     this.changeLargeur(p[1]);
+                     this.shadowRoot.querySelector("#selecteurLargeur").setAttribute("value",this.utf8_to_str(decodeURI(p[1])))
+                 }
+                 if(p[0]=="10") {
+                     this.selecteurTailleImageFond(p[1]);
+                     this.shadowRoot.querySelector("#selecteurTailleImageFond").setAttribute("value",this.utf8_to_str(decodeURI(p[1])))
+                 }
           
      }
      
@@ -263,21 +288,39 @@ class MyLogo extends HTMLElement {
         return decodeURIComponent(a)
     }
      sauvegarder(){
-         
+
         var searchParams = new URLSearchParams("");
         if(this.changeCouleurvalue ) {
-            searchParams.append("changeCouleur", this.changeCouleurvalue);
+            searchParams.append("1", this.changeCouleurvalue);
         }
         if(this.urlImageValue ) {
-            searchParams.append("urlImageValue", this.urlImageValue)
-        
+            searchParams.append("2", this.urlImageValue)
         }
         if(this.changeSizeValue ) {
-            searchParams.append("changeSizeValue", this.changeSizeValue)
+            searchParams.append("3", this.changeSizeValue)
         }
-        
-        
-        this.savedURL = window.location+"?"+encodeURI(searchParams);
+         if(this.changeHauteurValue ) {
+             searchParams.append("4", this.changeHauteurValue)
+         }
+         if(this.changeLargeurBordureValue ) {
+             searchParams.append("5", this.changeLargeurBordureValue)
+         }
+         if(this.changeCouleurBordureValue ) {
+             searchParams.append("6", this.changeCouleurBordureValue)
+         }
+         if(this.radiusValue ) {
+             searchParams.append("7", this.radiusValue)
+         }
+         if(this.textLogoValue ) {
+             searchParams.append("8", this.textLogoValue)
+         }
+         if(this.changeLargeurValue ) {
+             searchParams.append("9", this.changeLargeurValue)
+         }
+         if(this.selecteurTailleImageFondValue ) {
+             searchParams.append("10", this.selecteurTailleImageFondValue)
+         }
+        this.savedURL = window.location.href.split('?')[0]+"?"+encodeURI(searchParams);
         
        /* var copyText = document.getElementById("savedURL");
         copyText.select();
@@ -301,6 +344,8 @@ class MyLogo extends HTMLElement {
 
         // On modifie les URLs relatifs
         this.fixRelativeURLs();
+        this.tryToValorise();
+
     }
 
     fixRelativeURLs() {
@@ -360,20 +405,26 @@ class MyLogo extends HTMLElement {
             });
             this.shadowRoot.querySelector("#charger")
             .addEventListener("click", () => {
-                this.tryToValorise();
+                    this.tryToValorise()
             });
+        this.shadowRoot.querySelector("#selecteurTailleImageFond")
+            .addEventListener("input", (event) => {
+                this.selecteurTailleImageFond(event.target.value)
+            });
+
+
+
     }
 
 
     // Fonction
     changeCouleur(val) {
         this.logo.style.color = val;
-        this.changeCouleurvalue = val.substring(1);
+        this.changeCouleurvalue = val;
     }
 
     changeSize(val) {
         this.logo.style.fontSize = val + "px";
-        this.changeSize = val;
         this.changeSizeValue = val;
     }
     changeLargeur(val) {
@@ -393,7 +444,7 @@ class MyLogo extends HTMLElement {
     changeCouleurBordure(val) {
         this.couleurBordure= val;
         this.construireBordure();
-        this.changeCouleurBordureValue = val;
+        this.changeCouleurBordureValue =  val;
     }
     changerTextLogo(val) {
         if (val=="")
@@ -410,20 +461,29 @@ class MyLogo extends HTMLElement {
     {
         this.logo.style.border =this.largeurBordure+this.couleurBordure+ " solid";
     }
-    selecteurRadiusBordure(val)
-    { 
-        this.logo.style.borderRadius  =val+"px";
+    selecteurRadiusBordure(val) {
+
+        this.logo.style.borderRadius = val + "px";
         console.log("radius")
-        this.takeshot()
-        this.radiusValus = val;
+        this.radiusValue = val;
     }
     setUrlImage(val){
+    try{
+        console.log(val)
         this.logo.style.background = "url("+val+")";
         this.urlImageValue = encodeURI(val);
-       
-       
     }
-    
+    catch (e) {
+    console.log(e)
+    }
+    }
+
+    selecteurTailleImageFond(val){
+        console.log("HELP"+val)
+        this.logo.style.backgroundSize  = val+ "px"
+       this.selecteurTailleImageFondValue = val;
+    }
+
 }
 
 customElements.define("my-logo", MyLogo);
