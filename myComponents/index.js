@@ -210,15 +210,20 @@ class MyLogo extends HTMLElement {
         <br>
         Text : <input type="textBox"id="inputTextLogo">
         <br>
+        Animation : <select name="animations" id="selecteurAnimationText">
+    <option value="">Choisir une animation</option>
+    
+</select>
+        <br>
     <button id="sauvegarder"> Sauvegarder </button>
     <button id="charger"> Charger </button>
     `;
 
     constructor() {
-    
+
         super();
         // On crée le "shadow DOM"
-        this.attachShadow({ mode: "open" });
+        this.attachShadow({mode: "open"});
 
         // récupérer les propriétés/attributs HTML
         this.couleur = this.getAttribute("couleur");
@@ -234,7 +239,8 @@ class MyLogo extends HTMLElement {
         this.size = this.getAttribute("size");
 
     }
-    tryToValorise(){
+
+    tryToValorise() {
         let parametres = new URLSearchParams(window.location.search);
          console.log(parametres.entries())
              for (let p of parametres.entries()) {
@@ -283,8 +289,9 @@ class MyLogo extends HTMLElement {
      }
      
     }
-     utf8_to_str(a) {
-       
+
+    utf8_to_str(a) {
+
         return decodeURIComponent(a)
     }
      sauvegarder(){
@@ -330,6 +337,7 @@ class MyLogo extends HTMLElement {
         console.log(encodeURI(this.savedURL));
         this.active = true;
     }
+
     connectedCallback() {
         // ici on instancie l'interface graphique etc.
         this.shadowRoot.innerHTML = `<style>${this.style}</style>`
@@ -378,32 +386,32 @@ class MyLogo extends HTMLElement {
             .addEventListener("input", (event) => {
                 this.changeLargeur(event.target.value);
             });
-        
+
         this.shadowRoot.querySelector("#selecteurLargeurBordure")
             .addEventListener("input", (event) => {
                 this.changeLargeurBordure(event.target.value);
             });
-            this.shadowRoot.querySelector("#selecteurCouleurBordure")
+        this.shadowRoot.querySelector("#selecteurCouleurBordure")
             .addEventListener("input", (event) => {
                 this.changeCouleurBordure(event.target.value);
             });
-            this.shadowRoot.querySelector("#inputTextLogo")
+        this.shadowRoot.querySelector("#inputTextLogo")
             .addEventListener("input", (event) => {
                 this.changerTextLogo(event.target.value);
             });
-            this.shadowRoot.querySelector("#selecteurRadiusBordure")
+        this.shadowRoot.querySelector("#selecteurRadiusBordure")
             .addEventListener("input", (event) => {
                 this.selecteurRadiusBordure(event.target.value);
             });
-            this.shadowRoot.querySelector("#urlImage")
+        this.shadowRoot.querySelector("#urlImage")
             .addEventListener("input", (event) => {
                 this.setUrlImage(event.target.value);
             });
-            this.shadowRoot.querySelector("#sauvegarder")
+        this.shadowRoot.querySelector("#sauvegarder")
             .addEventListener("click", () => {
                 this.sauvegarder();
             });
-            this.shadowRoot.querySelector("#charger")
+        this.shadowRoot.querySelector("#charger")
             .addEventListener("click", () => {
                     this.tryToValorise()
             });
@@ -427,39 +435,42 @@ class MyLogo extends HTMLElement {
         this.logo.style.fontSize = val + "px";
         this.changeSizeValue = val;
     }
+
     changeLargeur(val) {
         this.logo.style.width = val + "px";
         this.changeLargeurValue = val;
     }
+
     changeHauteur(val) {
         this.logo.style.height = val + "px";
         this.changeHauteurValue = val;
     }
+
     changeLargeurBordure(val) {
-        this.largeurBordure = val+"px ";
-       // this.logo.style.border = val+"px ";
-       this.construireBordure();
-       this.changeLargeurBordureValue = val;
+        this.largeurBordure = val + "px ";
+        // this.logo.style.border = val+"px ";
+        this.construireBordure();
+        this.changeLargeurBordureValue = val;
     }
+
     changeCouleurBordure(val) {
-        this.couleurBordure= val;
+        this.couleurBordure = val;
         this.construireBordure();
         this.changeCouleurBordureValue =  val;
     }
+
     changerTextLogo(val) {
-        if (val=="")
-        {
+        if (val == "") {
             console.log("vide")
-            val ="​"
+            val = "​"
         }
-        this.textLogo.innerText= val;
+        this.textLogo.innerText = val;
         this.textLogoValue = val;
 
     }
-    
-    construireBordure()
-    {
-        this.logo.style.border =this.largeurBordure+this.couleurBordure+ " solid";
+
+    construireBordure() {
+        this.logo.style.border = this.largeurBordure + this.couleurBordure + " solid";
     }
     selecteurRadiusBordure(val) {
 
