@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="71eaffd2-1485-48c4-a2ed-07f8457fc1a6" name="Changes" comment="" />
+    <list default="true" id="71eaffd2-1485-48c4-a2ed-07f8457fc1a6" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/myComponents/ressources/fonts.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/myComponents/images/flammes.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/myComponents/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/myComponents/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/myComponents/ressources/animation.js" beforeDir="false" afterPath="$PROJECT_DIR$/myComponents/ressources/animation.js" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -48,10 +55,26 @@
       <option name="presentableId" value="Default" />
       <updated>1632382921845</updated>
       <workItem from="1632382924791" duration="8230000" />
+      <workItem from="1632479931335" duration="1532000" />
+      <workItem from="1632501161119" duration="796000" />
+      <workItem from="1632653869251" duration="11469000" />
+      <workItem from="1632742861935" duration="5430000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
 </project>

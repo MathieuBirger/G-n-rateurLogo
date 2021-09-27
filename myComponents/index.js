@@ -1,15 +1,11 @@
 import {animationsCode,listAnimation} from "./ressources/animation.js"
+import {listFonts} from "./ressources/fonts.js"
 const getBaseURL = () => {
     return new URL('.', import.meta.url);
 };
 
 class MyLogo extends HTMLElement {
     style = `
-    @import url('https://fonts.googleapis.com/css2?family=Grey+Qo&display=swap');
-
-    #logo {
-        font-family: 'Grey Qo', cursive;
-    }
     .flex-container {
         display: -ms-flexbox;
         display: -webkit-flex;
@@ -41,13 +37,14 @@ class MyLogo extends HTMLElement {
         -ms-flex-item-align: auto;
         align-self: auto;
         }
-         `+animationsCode.replaceAll('#infinite#', '');
+         `+animationsCode;
     html = `
-    <div id="logo" class="flex-container">
-    <div class="flex-item-center" id="textLogo">​dddd</div>
-    <!-- <img src="./images/flammes.jpg" width=200> -->
-    </div>
-    <br>
+<link href='https://fonts.googleapis.com/css2?family=Dancing+Script' rel='stylesheet' type='text/css'>
+<table>
+<thead>
+  <tr>
+    <td> 
+    
     <h1>Logo</h1>
     Hauteur : 30 <input type="range" value=300 min=30 max=600 id="selecteurHauteur"> 600
         <br>
@@ -60,6 +57,10 @@ class MyLogo extends HTMLElement {
         Animation : <select name="animations" id="selecteurAnimationImage">
     <option value="">Choisir une animation</option>
                 </select>
+                 <br>
+             Animation infinie : <input type="checkbox" name="Infini" id="selecteurAnimationLogoInfini">
+  
+                </input>
     <h1>Bordure du logo</h1>
     
         Largeur : 0 <input type="range" value=0 min=0 max=20 id="selecteurLargeurBordure"> 20
@@ -71,11 +72,16 @@ class MyLogo extends HTMLElement {
     <h1>Text du logo</h1>
         Couleur : <input type="color" id="selecteurCouleur">
         <br>
-        Taille : 5 <input type="range" value=40 min=5 max=100 id="selecteurTaille"> 100
+        Taille : 5 <input type="range" value=40 min=5 max=400 id="selecteurTaille"> 400
+        <br>
+        Police : <select name="police" id="selecteurPoliceText">
+    <option value="">Choisir une police</option>
+                </select>
         <br>
         Text : <input type="textBox"id="inputTextLogo">
         <br>
         Animation : <select name="animations" id="selecteurAnimationText">
+       
     <option value="">Choisir une animation</option>
                 </select>
         <br>
@@ -83,8 +89,28 @@ class MyLogo extends HTMLElement {
   
                 </input>
         <br>
-    <button id="sauvegarder"> Sauvegarder </button>
-    <button id="charger"> Charger </button>
+        <br>
+        <br>
+    <button id="sauvegarder">Sauvegarder le lien</button>
+    <br>
+     <button id="generer">Générer la balise</button>
+    <br>
+  <input style="visibility: hidden" type="textBox"id="savedURL">
+
+    </td>
+    <td style="width:200px ">
+    
+</td>
+    <td> 
+     <div id="logo" class="flex-container">
+     <div class="flex-item-center" id="textLogo">​</div>
+     </td>
+     
+  </tr>
+</thead>
+</table>
+  
+   
     `;
 
     constructor() {
@@ -94,8 +120,9 @@ class MyLogo extends HTMLElement {
         this.attachShadow({mode: "open"});
 
         // récupérer les propriétés/attributs HTML
-        this.couleur = this.getAttribute("couleur");
+
         if (!this.couleur) this.couleur = "black";
+
 
         if (!this.couleurBordure) this.couleurBordure = "black";
 
@@ -106,10 +133,14 @@ class MyLogo extends HTMLElement {
         this.controls = this.getAttribute("controls");
         this.size = this.getAttribute("size");
 
-
-
     }
-
+    addStylesheetURL(url) {
+        console.log("ajout")
+        var link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = url;
+        document.getElementsByTagName('head')[0].appendChild(link);
+    }
     tryToValorise() {
         let parametres = new URLSearchParams(window.location.search);
          console.log(parametres.entries())
@@ -144,7 +175,7 @@ class MyLogo extends HTMLElement {
                      this.shadowRoot.querySelector("#selecteurRadiusBordure").setAttribute("value",this.utf8_to_str(decodeURI(p[1])))
                  }
                  if(p[0]=="8") {
-                     this.changerTextLogo(p[1]);
+                     this.changerTextLogo(this.utf8_to_str(decodeURI(p[1])));
                      this.shadowRoot.querySelector("#inputTextLogo").setAttribute("value",this.utf8_to_str(decodeURI(p[1])))
                  }
                  if(p[0]=="9") {
@@ -154,6 +185,31 @@ class MyLogo extends HTMLElement {
                  if(p[0]=="10") {
                      this.selecteurTailleImageFond(p[1]);
                      this.shadowRoot.querySelector("#selecteurTailleImageFond").setAttribute("value",this.utf8_to_str(decodeURI(p[1])))
+                 }
+                 if(p[0]=="11") {
+                     if(p[1] == "true")
+                         p[1] = true
+                     this.selecteurAnimationLogoInfini(p[1]);
+                     this.shadowRoot.querySelector("#selecteurAnimationLogoInfini").setAttribute("checked",p[1])
+                 }
+                 if(p[0]=="12") {
+                     this.selecteurAnimationText(p[1]);
+                     this.shadowRoot.querySelector("#selecteurAnimationText").value = this.utf8_to_str(decodeURI(p[1]))
+
+                 }
+                 if(p[0]=="13") {
+                     if(p[1] == "true")
+                         p[1] = true
+                     this.selecteurAnimationTextInfini(p[1]);
+                     this.shadowRoot.querySelector("#selecteurAnimationTextInfini").setAttribute("checked", p[1])
+                 }
+                 if(p[0]=="14") {
+                     this.selecteurAnimationImage(p[1]);
+                     this.shadowRoot.querySelector("#selecteurAnimationImage").value = this.utf8_to_str(decodeURI(p[1]))
+                 }
+                 if(p[0]=="15") {
+                     this.selecteurPoliceText(p[1]);
+                     this.shadowRoot.querySelector("#selecteurPoliceText").value = this.utf8_to_str(decodeURI(p[1]))
                  }
           
      }
@@ -197,44 +253,182 @@ class MyLogo extends HTMLElement {
          if(this.selecteurTailleImageFondValue ) {
              searchParams.append("10", this.selecteurTailleImageFondValue)
          }
+         if(this.selecteurAnimationLogoInfiniValue ) {
+             searchParams.append("11", this.selecteurAnimationLogoInfiniValue)
+         }
+         if(this.selecteurAnimationTextValue ) {
+             searchParams.append("12", this.selecteurAnimationTextValue)
+         }
+         if(this.selecteurAnimationTextInfiniValue ) {
+             searchParams.append("13", this.selecteurAnimationTextInfiniValue)
+         }
+         if(this.selecteurAnimationImageValue ) {
+             searchParams.append("14", this.selecteurAnimationImageValue)
+         }
+         if(this.selecteurPoliceTextValue ) {
+             searchParams.append("15", this.selecteurPoliceTextValue)
+         }
         this.savedURL = window.location.href.split('?')[0]+"?"+encodeURI(searchParams);
+
+
         
-       /* var copyText = document.getElementById("savedURL");
+        var copyText =  this.shadowRoot.querySelector("#savedURL");
+         copyText.style.visibility="visible"
+        copyText.value=encodeURI(this.savedURL)
         copyText.select();
         copyText.setSelectionRange(0, 99999)
-        document.execCommand("copy");*/
-       
-        console.log(encodeURI(this.savedURL));
+        document.execCommand("copy");
+         copyText.style.visibility="hidden"
+         alert("lien sauvegardé dans le presse papier");
         this.active = true;
+    }
+  generer(){
+
+        let balise = "<my-logo "
+        if(this.changeCouleurvalue ) {
+            balise = balise +'Couleur="' + this.changeCouleurvalue+'" '
+        }
+        if(this.urlImageValue ) {
+            balise = balise +'UrlImage="' + this.urlImageValue+'" '
+        }
+        if(this.changeSizeValue ) {
+            balise = balise +'Taille="' + this.changeSizeValue+'" '
+        }
+         if(this.changeHauteurValue ) {
+             balise = balise +'Hauteur="' + this.changeHauteurValue+'" '
+         }
+         if(this.changeLargeurBordureValue ) {
+             balise = balise +'LargeurBordure="' + this.changeLargeurBordureValue+'" '
+         }
+         if(this.changeCouleurBordureValue ) {
+             balise = balise +'CouleurBordure="' + this.changeCouleurBordureValue+'" '
+         }
+         if(this.radiusValue ) {
+             balise = balise +'RadiusBordure="' + this.radiusValue+'" '
+         }
+         if(this.textLogoValue ) {
+             balise = balise +'TextLogo="' + this.textLogoValue+'" '
+         }
+         if(this.changeLargeurValue ) {
+             balise = balise +'Largeur="' + this.changeLargeurValue+'" '
+         }
+         if(this.selecteurTailleImageFondValue ) {
+             balise = balise +'TailleImageFond="' + this.selecteurTailleImageFondValue+'" '
+         }
+         if(this.selecteurAnimationLogoInfiniValue ) {
+             balise = balise +'AnimationLogoInfini="' + this.selecteurAnimationLogoInfiniValue+'" '
+         }
+         if(this.selecteurAnimationTextValue ) {
+             balise = balise +'AnimationText="' + this.selecteurAnimationTextValue+'" '
+         }
+         if(this.selecteurAnimationTextInfiniValue ) {
+             balise = balise +'AnimationTextInfini="' + this.selecteurAnimationTextInfiniValue+'" '
+         }
+         if(this.selecteurAnimationImageValue ) {
+             balise = balise +'AnimationImage="' + this.selecteurAnimationImageValue+'" '
+         }
+         if(this.selecteurPoliceTextValue ) {
+             balise = balise +'PoliceText="' + this.selecteurPoliceTextValue+'" '
+         }
+         balise = balise +"> \n </my-logo>"
+      var copyText =  this.shadowRoot.querySelector("#savedURL");
+      copyText.style.visibility="visible"
+      copyText.value=balise
+      copyText.select();
+      copyText.setSelectionRange(0, 99999)
+      document.execCommand("copy");
+      copyText.style.visibility="hidden"
+      alert("La balise a été copiée dans le presse papier");
     }
 
     connectedCallback() {
-        // ici on instancie l'interface graphique etc.
-        this.shadowRoot.innerHTML = `<style>${this.style}</style>`
-            + this.html;
+        if(this.getAttribute("creation") == "true") {
+            // ici on instancie l'interface graphique etc.
+         //   let logoNode = this.logo.cloneNode(true).outerHTML
+           // console.log("<style>" + this.style + "</style>" + logoNode);
+            this.shadowRoot.innerHTML = `<style>${this.style}</style>`
+                + this.html;
 
-        this.textLogo = this.shadowRoot.querySelector("#textLogo");
-        this.logo = this.shadowRoot.querySelector("#logo");
-        // affecter les valeurs des attributs à la création
-        this.logo.style.color = this.couleur;
+            this.textLogo = this.shadowRoot.querySelector("#textLogo");
+            this.logo = this.shadowRoot.querySelector("#logo");
+            // affecter les valeurs des attributs à la création
+            this.logo.style.color = this.couleur;
 
-        this.declareEcouteurs();
+            this.declareEcouteurs();
 
-        // On modifie les URLs relatifs
-        this.fixRelativeURLs();
-        this.tryToValorise();
+            // On modifie les URLs relatifs
+            this.fixRelativeURLs();
 
-        let selectAnimationText = this.shadowRoot.querySelector("#selecteurAnimationText");
-        let selectAnimationImage = this.shadowRoot.querySelector("#selecteurAnimationImage");
-        for (let animation  in listAnimation){
-            var opt =document.createElement('option');
-            opt.value = listAnimation[animation];
-            opt.innerHTML = listAnimation[animation];
-            let opt2 = opt.cloneNode(true)
-            selectAnimationText.appendChild(opt);
-            selectAnimationImage.appendChild(opt2);
+
+            let selectAnimationText = this.shadowRoot.querySelector("#selecteurAnimationText");
+            let selectAnimationImage = this.shadowRoot.querySelector("#selecteurAnimationImage");
+            let selectPoliceText = this.shadowRoot.querySelector("#selecteurPoliceText");
+            for (let animation in listAnimation) {
+                var opt = document.createElement('option');
+                opt.value = listAnimation[animation];
+                opt.innerHTML = listAnimation[animation];
+                let opt2 = opt.cloneNode(true)
+                selectAnimationText.appendChild(opt);
+                selectAnimationImage.appendChild(opt2);
+            }
+            for (let font in listFonts) {
+                var opt = document.createElement('option');
+                opt.value = listFonts[font];
+                opt.innerHTML = listFonts[font];
+                selectPoliceText.appendChild(opt)
+            }
+            this.setUrlImage("https://cdn.radiofrance.fr/s3/cruiser-production/2020/09/f6f29b37-6952-40f6-829a-701b8db7fdea/1200x680_gettyimages-947552842_1.jpg");
+            this.changeLargeur(300);
+            this.changeHauteur(300);
+            this.tryToValorise();
         }
+        else {
+            this.shadowRoot.innerHTML = `<style>${this.style}</style>`
+            + this.html;
+            this.textLogo = this.shadowRoot.querySelector("#textLogo");
+            this.logo = this.shadowRoot.querySelector("#logo");
+            // affecter les valeurs des attributs à la création
+            this.logo.style.color = this.couleur;
 
+            this.declareEcouteurs();
+
+            // On modifie les URLs relatifs
+            this.fixRelativeURLs();
+
+            if (this.getAttribute("Couleur") != null)
+                this.changeCouleur(this.getAttribute("Couleur"));
+            if (this.getAttribute("UrlImage") != null)
+                this.setUrlImage(this.getAttribute("UrlImage"));
+            if (this.getAttribute("Taille") != null)
+                this.changeSize(this.getAttribute("Taille"));
+            if (this.getAttribute("Hauteur") != null)
+                this.changeHauteur(this.getAttribute("Hauteur"));
+            if (this.getAttribute("LargeurBordure") != null)
+                this.changeLargeurBordure(this.getAttribute("LargeurBordure"));
+            if (this.getAttribute("CouleurBordure") != null)
+                this.changeCouleurBordure(this.getAttribute("CouleurBordure"));
+            if (this.getAttribute("RadiusBordure") != null)
+                this.selecteurRadiusBordure(this.getAttribute("RadiusBordure"));
+            if (this.getAttribute("TextLogo") != null)
+                this.changerTextLogo(this.getAttribute("TextLogo"));
+            if (this.getAttribute("Largeur") != null)
+                this.changeLargeur(this.getAttribute("Largeur"));
+            if (this.getAttribute("TailleImageFond") != null)
+                this.selecteurTailleImageFond(this.getAttribute("TailleImageFond"));
+            if (this.getAttribute("AnimationLogoInfini") != null)
+                this.selecteurAnimationLogoInfini(this.getAttribute("AnimationLogoInfini"));
+            if (this.getAttribute("AnimationText") != null)
+                this.selecteurAnimationText(this.getAttribute("AnimationText"));
+            if (this.getAttribute("AnimationTextInfini") != null)
+                this.selecteurAnimationTextInfini(this.getAttribute("AnimationTextInfini"));
+            if (this.getAttribute("AnimationImage") != null)
+                this.selecteurAnimationImage(this.getAttribute("AnimationImage"));
+            if (this.getAttribute("PoliceText") != null)
+                this.selecteurPoliceText(this.getAttribute("PoliceText"));
+            this.shadowRoot.innerHTML = `<style>${this.style}</style>`
+                + this.logo.outerHTML;
+
+        }
     }
 
     fixRelativeURLs() {
@@ -244,9 +438,6 @@ class MyLogo extends HTMLElement {
             let imagePath = e.getAttribute('src');
             e.src = getBaseURL() + '/' + imagePath;
         });
-
-        //console.log(getBaseURL() +  "images/flammes.jpg")
-        this.logo.style.background = "url(" + getBaseURL() + "images/flammes.jpg)";
     }
 
     declareEcouteurs() {
@@ -292,10 +483,6 @@ class MyLogo extends HTMLElement {
             .addEventListener("click", () => {
                 this.sauvegarder();
             });
-        this.shadowRoot.querySelector("#charger")
-            .addEventListener("click", () => {
-                    this.tryToValorise()
-            });
         this.shadowRoot.querySelector("#selecteurTailleImageFond")
             .addEventListener("input", (event) => {
                 this.selecteurTailleImageFond(event.target.value)
@@ -306,7 +493,24 @@ class MyLogo extends HTMLElement {
             });
         this.shadowRoot.querySelector("#selecteurAnimationTextInfini")
             .addEventListener("input", (event) => {
-                this.selecteurAnimationTextInfini(event.target.value)
+                this.selecteurAnimationTextInfini(event.target.checked)
+            });
+        this.shadowRoot.querySelector("#selecteurAnimationImage")
+            .addEventListener("input", (event) => {
+                this.selecteurAnimationImage(event.target.value)
+            });
+
+        this.shadowRoot.querySelector("#selecteurAnimationLogoInfini")
+            .addEventListener("input", (event) => {
+                this.selecteurAnimationLogoInfini(event.target.checked)
+            });
+        this.shadowRoot.querySelector("#selecteurPoliceText")
+            .addEventListener("input", (event) => {
+                this.selecteurPoliceText(event.target.value)
+            });
+        this.shadowRoot.querySelector("#generer")
+            .addEventListener("click", () => {
+                this.generer()
             });
 
 
@@ -316,6 +520,7 @@ class MyLogo extends HTMLElement {
 
     // Fonction
     changeCouleur(val) {
+        console.log(val)
         this.logo.style.color = val;
         this.changeCouleurvalue = val;
     }
@@ -383,58 +588,47 @@ class MyLogo extends HTMLElement {
        this.selecteurTailleImageFondValue = val;
     }
     selecteurAnimationText(val){
-        console.log("HELP"+val);
+
+        this.animationClass  = val;
+        this.textLogo.classList.remove(this.textLogo.classList.item(1))
+        this.textLogo.classList.add(val)
+        this.selecteurAnimationTextValue = val;
+    }
+    selecteurAnimationTextInfini(val){
+        if(val == "true")
+            val = true
+        if (val == true) {
+            this.textLogo.style.animationIterationCount = "infinite";
+        }
+        else
+            this.textLogo.style.animationIterationCount = "";
+        this.selecteurAnimationTextInfiniValue = val;
+    }
+    selecteurAnimationLogoInfini(val){
+        if(val == "true")
+            val = true
+        if (val == true) {
+            this.logo.style.animationIterationCount = "infinite";
+        }
+        else
+            this.logo.style.animationIterationCount = "";
+        this.selecteurAnimationLogoInfiniValue = val;
+    }
+    selecteurAnimationImage(val){
         this.logo.classList.remove(this.logo.classList.item(1))
         console.log(this.logo.classList)
         this.logo.classList.add(val)
-        this.animationClass  = val;
-        this.textLogo.classList.add(val)
-        this.selecteurTailleImageFondValue = val;
-
+        this.selecteurAnimationImageValue = val;
     }
-    selecteurAnimationTextInfini(val){
-        this.style = `
-    @import url('https://fonts.googleapis.com/css2?family=Grey+Qo&display=swap');
-
-    #logo {
-        font-family: 'Grey Qo', cursive;
+    charger(){
+        this.textLogo.style.fontFamily = "Dancing Script, serif";
     }
-    .flex-container {
-        display: -ms-flexbox;
-        display: -webkit-flex;
-        display: flex;
-        -webkit-flex-direction: row;
-        -ms-flex-direction: row;
-        flex-direction: row;
-        -webkit-flex-wrap: wrap;
-        -ms-flex-wrap: wrap;
-        flex-wrap: wrap;
-        -webkit-justify-content: center;
-        -ms-flex-pack: center;
-        justify-content: center;
-        -webkit-align-content: stretch;
-        -ms-flex-line-pack: stretch;
-        align-content: stretch;
-        -webkit-align-items: center;
-        -ms-flex-align: center;
-        align-items: center;
-        }
-    .flex-item-center {
-        -webkit-order: 0;
-        -ms-flex-order: 0;
-        order: 0;
-        -webkit-flex: 0 1 auto;
-        -ms-flex: 0 1 auto;
-        flex: 0 1 auto;
-        -webkit-align-self: auto;
-        -ms-flex-item-align: auto;
-        align-self: auto;
-        }
-         `+animationsCode.replaceAll('#infinite#', 'infinite');
-        console.log("uesh")
-        this.shadowRoot.innerHTML = `<style>${this.style}</style>`
+    selecteurPoliceText(val){
+        console.log(val)
+        this.addStylesheetURL("https://fonts.googleapis.com/css2?family="+val+"&display=swap");
+        this.textLogo.style.fontFamily = val;
+        this.selecteurPoliceTextValue = val;
     }
-
 }
 
 customElements.define("my-logo", MyLogo);
